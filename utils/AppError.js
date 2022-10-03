@@ -4,8 +4,11 @@ class AppError extends Error{
 
         this.statusCode = this.statusCode
         this.status = `${this.statusCode}`.startsWith('4') ? 'fail' : 'error'
+
         this.isOperational = undefined
 
-        error.captureStackTrace(this, this.constructor)
+        Error.captureStackTrace(this, this.constructor)
     }
 }
+
+module.exports = AppError;

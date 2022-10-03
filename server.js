@@ -1,4 +1,9 @@
-const { default: mongoose } = require("mongoose");
+const { mongoose } = require("mongoose");
+
+const dotenv = require("dotenv")
+dotenv.config({path: './config.env'})
+
+
 const app = require("./app")
 
 process.on("uncaughtException", err =>{
@@ -8,19 +13,17 @@ process.on("uncaughtException", err =>{
 })
 
 
-// const db = process.env.DATABASE_NAME.replace(
-//     'PASSWORD',
-//     process.env.DATABASE_PASSOWRD
-// )
+const DB = process.env.DATABASE.replace(
+    'password',
+    process.env.DATABASE_PASSWORD
+)
 
-// mongoose.connect(db, {
-//     useNewUrlParser: true,
-//     useCreateIndex: true,
-//     userFindAndModify: true
-// })
-// .then(()=>{
-//     console.log("Db connected sucessfully")
-// })
+mongoose.connect(DB, {
+    useNewUrlParser: true,
+})
+.then(()=>{
+    console.log("Db connected sucessfully")
+})
 
 const port = process.env.PORT || 3000
 
