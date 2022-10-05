@@ -3,6 +3,9 @@ const User = require("./../models/user")
 const AppError = require("./../utils/AppError")
 const catchAsync = require("./../utils/catchAsync")
 const jwt = require("jsonwebtoken")
+const nodemailer = require("nodemailer")
+const { options } = require('../routes/user')
+const sendEmail =require("./../utils/sendEmail")
 
 // token 
 
@@ -85,10 +88,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
   
     // 4) Check if user changed password after the token was issued
-    if (currentUser.changedPasswordAfter(decoded.iat)) {
-      return next(
-        new AppError('User recently changed password! Please log in again.', 401)
-      );
+    if(currentUser.changedPasswordAfter(decoded.iat)){
+    return next (new AppError('User recently changed password! Please log in again.', 401))
     }
 
     //Grant access to the protected router
@@ -97,11 +98,27 @@ exports.protect = catchAsync(async (req, res, next) => {
     next();
 })
 
-exports.restrict = (...roles)=>{
-    return (req, res, next)=>{
-        if(!roles.includes(req.user.roles)){
-            return next(new AppError("you arent authenticated"), 402)
-        }
+exports.restrict = (...roles) =>{
+  return (req, res, next) =>{
+    if(!roles.includes(req.user.roles)){
+      return next(new AppError('User not allowed, comrade abeg trabaye'), 401)
     }
-    next()
+  }
+}
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+
+  const newuser = await User.findOne({email: req.body.email})
+if(!newuser){
+  return next(new AppError("please trabaye"), 400)
+}
+  const resetToken = newuser.createtokenreset()
+  await newuser.save({validateBeforeSave: false})
+
+  const resetUrl = `${req.protocol}://${req.get('host')}/api/users/resetpassword/${req.resetTokwn}`
+
+})
+
+exports.resetPassword = (req, res, next)=>{
+    
 }
