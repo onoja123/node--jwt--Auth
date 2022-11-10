@@ -35,16 +35,18 @@ const userSchema = mongoose.Schema(
     }
 )
 
-userSchema.pre("save", async function(next){
+userSchema.pre('save', async function(next){
+    //if password was modified
     if(!this.isModified('password')) return next()
-
+    //hash the password by 12
     this.password = await bcrypt.hash(this.password, 12)
-
+    //delete the password confirm
     this.passwordConfirm = undefined
+
     next()
 })
 
-userSchema.methods.correctpassword = async function(candidatepassword, userpassword){
+userSchema.methods.correctPassword = async function(candidatepassword, userpassword){
     return await bcrypt.compare(candidatepassword, userpassword)
 };
 
@@ -68,3 +70,4 @@ userSchema.methods.createtokenreset = function(){
 const User = mongoose.model("User", userSchema)
 
 module.exports = User
+

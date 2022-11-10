@@ -17,7 +17,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) =>{
 
 
 //Getting a particular user
-exports.getUser = catchAsync(async  (req, res, next) =>{
+exports.getUsers = catchAsync(async  (req, res, next) =>{
     const user = User.findById(req.params.id)
 
     res.status(200).json({
